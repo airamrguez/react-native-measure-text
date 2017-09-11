@@ -35,7 +35,6 @@ RCT_EXPORT_METHOD(measure:(NSDictionary *)options
         reject(@"invalid_fontSize", @"missing required fontSize property", nil);
         return;
     }
-    
     CGFloat fontSize = [RCTConvert CGFloat:options[@"fontSize"]];
     
     if([options objectForKey:@"fontFamily"] == nil){
