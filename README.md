@@ -3,8 +3,6 @@
 
 Measure text height without laying it out.
 
-[![npm version](https://badge.fury.io/js/react-native-measure-text.svg)](https://badge.fury.io/js/react-native-measure-text)
-
 ## Installation
 
 ### Automatic installation
