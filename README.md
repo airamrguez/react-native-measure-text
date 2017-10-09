@@ -1,5 +1,5 @@
 # React Native Measure Text
-# Font family only ios now!
+# Both platform support Now!
 
 Measure text height without laying it out.
 
@@ -55,7 +55,7 @@ class Test extends Component {
       texts, /* texts to measure */
       width, /* container width */
       fontSize,
-      fontFamily:'Montserrat-Regular', //IT's For IOS ONLY NOW, If null systemDefault font.
+      fontFamily:'Montserrat-Regular',
     );
     this.setState({ heights });
   }
