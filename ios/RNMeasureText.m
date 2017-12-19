@@ -49,11 +49,11 @@ RCT_EXPORT_MODULE();
         reject(@"invalid_width", @"missing required width property", nil);
         return nil;
     }
-    if (option[@"texts"] == nil) {
+    if (options[@"texts"] == nil) {
         reject(@"invalid_texts", @"missing required texts property", nil);
         return nil;
     }
-    if (option[@"fontSize"] == nil) {
+    if (options[@"fontSize"] == nil) {
         reject(@"invalid_fontSize", @"missing required fontSize property", nil);
         return nil;
     }
@@ -61,7 +61,7 @@ RCT_EXPORT_MODULE();
     float width = [RCTConvert float:options[@"width"]];
     NSArray *texts = [RCTConvert NSArray:options[@"texts"]];
     CGFloat fontSize = [RCTConvert CGFloat:options[@"fontSize"]];
-    UIFont *font = option[@"fontFamily"] == nil
+    UIFont *font = options[@"fontFamily"] == nil
         ? [UIFont systemFontOfSize: fontSize]
         : [UIFont fontWithName:options[@"fontFamily"] size:fontSize];
     
@@ -75,7 +75,7 @@ RCT_EXPORT_METHOD(measureSizes:(NSDictionary *)options
     NSArray *sizes = [self measureWithOptions:options rejecter:reject];
     if (sizes == nil) return;
 
-    resolve(sizes)
+  resolve(sizes);
 }
 
 RCT_EXPORT_METHOD(measure:(NSDictionary *)options
@@ -89,7 +89,7 @@ RCT_EXPORT_METHOD(measure:(NSDictionary *)options
     for (NSDictionary* size in sizes) {
         [results addObject:size[@"height"]];
     }
-    resolve(sizes)
+  resolve(results);
 }
 
 @end
