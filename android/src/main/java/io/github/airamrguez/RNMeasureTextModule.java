@@ -50,6 +50,13 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     paint.setAntiAlias(true);
     paint.setTextSize(fontSize);
 
+    String fontFamily = options.getString("fontFamily");
+
+    if(options.hasKey("fontFamily")){
+      AssetManager assetManager = getReactApplicationContext().getAssets();
+      paint.setTypeface(Typeface.createFromAsset(assetManager,"fonts/"+fontFamily+".ttf"));
+    }
+
     WritableArray results = Arguments.createArray();
 
     for (int i = 0; i < texts.size(); i++) {

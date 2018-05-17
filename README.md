@@ -1,8 +1,7 @@
 # React Native Measure Text
+# Both platform support Now!
 
 Measure text height without laying it out.
-
-[![npm version](https://badge.fury.io/js/react-native-measure-text.svg)](https://badge.fury.io/js/react-native-measure-text)
 
 ## Installation
 
@@ -10,7 +9,7 @@ Measure text height without laying it out.
 
 `$ yarn add react-native-measure-text`
 
-`$ react-native link react-native-measure-text`
+`$ react-native link`
 
 ### Manual installation
 
@@ -55,7 +54,8 @@ class Test extends Component {
     const heights = await MeasureText.measure({(
       texts, /* texts to measure */
       width, /* container width */
-      fontSize
+      fontSize,
+      fontFamily:'Montserrat-Regular',
     );
     this.setState({ heights });
   }

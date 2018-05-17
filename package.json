@@ -1,4 +1,6 @@
 {
+  "name": "react-native-measure-text-with-fontfamily",
+  "version": "1.0.3",
   "name": "react-native-measure-text",
   "version": "1.0.0-alpha.2",
   "description": "Measure text height without laying it out.",
@@ -14,14 +16,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/airamrguez/react-native-measure-text.git"
+    "url": "git+https://github.com/ayberkanilatsiz/react-native-measure-text"
   },
-  "bugs": {
-    "url": "https://github.com/airamrguez/react-native-measure-text/issues"
-  },
-  "homepage": "https://github.com/airamrguez/react-native-measure-text#readme",
-  "author": "Airam Rguez",
-  "license": "BSD 2-clause License",
   "peerDependencies": {
     "react-native": "^0.41.2"
   }
