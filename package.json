@@ -1,7 +1,8 @@
-
 {
   "name": "react-native-measure-text-with-fontfamily",
-  "version": "1.0.2",
+  "version": "1.0.3",
+  "name": "react-native-measure-text",
+  "version": "1.0.0-alpha.2",
   "description": "Measure text height without laying it out.",
   "main": "index.js",
   "keywords": [

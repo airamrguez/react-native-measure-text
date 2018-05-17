@@ -16,7 +16,7 @@ public class RNMeasureTextPackage implements ReactPackage {
       return Arrays.<NativeModule>asList(new RNMeasureTextModule(reactContext));
     }
 
-    @Override
+    // Deprecated from RN 0.47
     public List<Class<? extends JavaScriptModule>> createJSModules() {
       return Collections.emptyList();
     }

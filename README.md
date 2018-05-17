@@ -7,7 +7,7 @@ Measure text height without laying it out.
 
 ### Automatic installation
 
-`$ npm install react-native-measure-text-with-fontfamily --save`
+`$ yarn add react-native-measure-text`
 
 `$ react-native link`
 
