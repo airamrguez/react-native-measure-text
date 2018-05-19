@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Button,
   ScrollView,
   PixelRatio,
   Platform,
@@ -24,29 +25,64 @@ const TEXTS = [
 const TEXT_WIDTH = 100;
 const TEXT_HEIGHT = 20;
 
+// This example is using preinstalled fonts in the device, but
+// you can use custom fonts.
+const PREINSTALLED_FONT = Platform.select({
+  ios: 'EuphemiaUCAS',
+  android: 'monospace',
+});
+const ANTON_FONT = 'Anton';
+
 export default class TestMeasureText extends Component {
   constructor(...args) {
     super(...args);
     this.state = {
       heights: 0,
       widths: 0,
+      useAntonFont: false,
     };
   }
-  async componentDidMount() {
-    const heights = await MeasureText.heights({
-      texts: TEXTS,
-      width: TEXT_WIDTH,
-      fontSize: FONT_SIZE,
-    });
-    const widths = await MeasureText.widths({
-      texts: TEXTS,
-      height: TEXT_HEIGHT,
-      fontSize: FONT_SIZE,
-    });
+  componentDidMount() {
+    this.measure();
+  }
+  async measure() {
+    const { useAntonFont } = this.state;
+    const fontFamily = useAntonFont ? ANTON_FONT : PREINSTALLED_FONT;
+    const [heights, widths] = await Promise.all([
+      MeasureText.heights({
+        texts: TEXTS,
+        width: TEXT_WIDTH,
+        fontSize: FONT_SIZE,
+        fontFamily,
+      }),
+      MeasureText.widths({
+        texts: TEXTS,
+        height: TEXT_HEIGHT,
+        fontSize: FONT_SIZE,
+        fontFamily,
+      }),
+    ]);
     this.setState({ heights, widths });
   }
+  toggleFont = () => {
+    this.setState(
+      state => ({
+        useAntonFont: !state.useAntonFont,
+      }),
+      this.measure,
+    );
+  };
   render() {
-    const { heights, widths } = this.state;
+    const { heights, widths, useAntonFont } = this.state;
+    let buttonText;
+    let fontFamily;
+    if (useAntonFont) {
+      buttonText = 'Switch to preinstalled fonts';
+      fontFamily = ANTON_FONT;
+    } else {
+      buttonText = 'Switch to Anton font';
+      fontFamily = PREINSTALLED_FONT;
+    }
     return (
       <View style={styles.container}>
         <ScrollView style={{ flex: 1 }}>
@@ -63,6 +99,7 @@ export default class TestMeasureText extends Component {
                 style={{
                   width: TEXT_WIDTH,
                   fontSize: FONT_SIZE,
+                  fontFamily,
                   height: heights[i],
                   backgroundColor: 'coral',
                   color: '#fff',
@@ -85,6 +122,7 @@ export default class TestMeasureText extends Component {
                 style={{
                   height: TEXT_HEIGHT,
                   fontSize: FONT_SIZE,
+                  fontFamily,
                   width: widths[i],
                   backgroundColor: 'orangered',
                   color: '#fff',
@@ -94,6 +132,7 @@ export default class TestMeasureText extends Component {
               </Text>
             </View>
           ))}
+          <Button onPress={this.toggleFont} title={buttonText} />
         </ScrollView>
       </View>
     );

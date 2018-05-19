@@ -49,6 +49,7 @@ const texts = [
 ];
 const width = 100;
 const fontSize = 15;
+const fontFamily = 'Anton';
 
 class Test extends Component {
   state = {
@@ -58,7 +59,8 @@ class Test extends Component {
     const heights = await MeasureText.heights({(
       texts, /* texts to measure */
       width, /* container width */
-      fontSize
+      fontSize,
+      fontFamily /* fontFamily is optional! */
     );
     this.setState({ heights });
   }
@@ -72,6 +74,7 @@ class Test extends Component {
             style={{
               width,
               fontSize,
+              fontFamily,
               height: heights[i],
             }}
           >
@@ -100,3 +103,24 @@ Measure options:
 * `width`: Container width when you want to measure the height.
 * `height`: Container height when you want to measure the width.
 * `fontSize`: The size of the font.
+* `fontFamily`: The name of a _custom_ font or a _preinstalled_ font. This is optional.
+
+## How to use a custom font?
+
+Follow these steps:
+
+1.  Create `assets/fonts` at the root of your React Native project.
+2.  Add this piece of JSON into your `package.json` file:
+
+```
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
+  }
+```
+
+3.  If you want to use the same font cross-platform, in order to avoid platform incompatibility issues, be sure that your font file name matches the font name! For example if the font name is "Anton" the file should be named "Anton.ttf". You can specify different fonts for each platform if you want.
+4.  Run the command `react-native link` on the root of your project to link the added fonts.
+
+You're ready to go!

@@ -24,9 +24,10 @@ RCT_EXPORT_METHOD(heights:(NSDictionary *)options
     float width = [RCTConvert float:options[@"width"]];
     NSArray *texts = [RCTConvert NSArray:options[@"texts"]];
     CGFloat fontSize = [RCTConvert CGFloat:options[@"fontSize"]];
+    NSString *fontFamily = [RCTConvert NSString:options[@"fontFamily"]];
 
     NSMutableArray* results = [[NSMutableArray alloc] init];
-    UIFont *font = [UIFont systemFontOfSize: fontSize];
+    UIFont *font = [self getFont:fontFamily size:fontSize];
 
     for (NSString* text in texts) {
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize: CGSizeMake(width, FLT_MAX)];
@@ -44,9 +45,10 @@ RCT_EXPORT_METHOD(widths:(NSDictionary *)options
     float height = [RCTConvert float:options[@"height"]];
     NSArray *texts = [RCTConvert NSArray:options[@"texts"]];
     CGFloat fontSize = [RCTConvert CGFloat:options[@"fontSize"]];
+    NSString *fontFamily = [RCTConvert NSString:options[@"fontFamily"]];
     
     NSMutableArray* results = [[NSMutableArray alloc] init];
-    UIFont *font = [UIFont systemFontOfSize: fontSize];
+    UIFont *font = [self getFont:fontFamily size:fontSize];
     
     for (NSString* text in texts) {
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize: CGSizeMake(FLT_MAX, height)];
@@ -79,6 +81,12 @@ RCT_EXPORT_METHOD(measure:(NSDictionary *)options
     [textContainer setLineFragmentPadding:0.0];
     (void) [layoutManager glyphRangeForTextContainer:textContainer];
     return [layoutManager usedRectForTextContainer:textContainer];
+}
+
+- (UIFont *)getFont:(NSString *)fontFamily size:(CGFloat)fontSize {
+    return fontFamily != nil ?
+        [UIFont fontWithName:fontFamily size:fontSize] :
+        [UIFont systemFontOfSize: fontSize];
 }
 
 @end

@@ -1,10 +1,14 @@
 
 package io.github.airamrguez;
 
+import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
+import android.content.res.AssetManager;
+import java.io.IOException;
+import java.util.regex.Pattern;
+import java.io.FileNotFoundException;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -32,8 +36,9 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     int width = Math.round((float)options.getDouble("width"));
     ReadableArray texts = options.getArray("texts");
     float fontSize = (float)options.getDouble("fontSize");
+    String fontFamily = options.getString("fontFamily");
 
-    TextPaint paint = createTextPaint(fontSize);
+    TextPaint paint = createTextPaint(fontSize, fontFamily);
     WritableArray results = Arguments.createArray();
 
     for (int i = 0; i < texts.size(); i++) {
@@ -62,8 +67,9 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     int height = Math.round((float)options.getDouble("height"));
     ReadableArray texts = options.getArray("texts");
     float fontSize = (float)options.getDouble("fontSize");
+    String fontFamily = options.getString("fontFamily");
 
-    TextPaint paint = createTextPaint(fontSize);
+    TextPaint paint = createTextPaint(fontSize, fontFamily);
     WritableArray results = Arguments.createArray();
 
     for (int i = 0; i < texts.size(); i++) {
@@ -80,11 +86,42 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     heights(options, promise);
   }
 
-  private TextPaint createTextPaint(float fontSize) {
+  private TextPaint createTextPaint(float fontSize, String fontFamily) {
     TextPaint paint = new TextPaint();
     paint.setAntiAlias(true);
     paint.setTextSize(fontSize);
+    if (fontFamily != null) {
+      Typeface typeface = null;
+      AssetManager assetManager = getReactApplicationContext().getAssets();
+      String fontPath = findFontPath(assetManager, fontFamily);
+      // If the font path is not installed let's suppose that is a
+      // preinstalled font.
+      if (fontPath != null) {
+        typeface = Typeface.createFromAsset(assetManager, fontPath);
+      } else {
+        // Allow using preinstalled Android fonts: monospace, serif, normal, Roboto...
+        typeface = Typeface.create(fontFamily, Typeface.NORMAL);
+      }
+      paint.setTypeface(typeface);
+    }
     return paint;
+  }
+
+  private String findFontPath(AssetManager assetManager, String fontFamily) {
+    Pattern pattern = Pattern.compile("^" + fontFamily + "\\.(ttf|otf)$");
+
+    try {
+      String[] files = assetManager.list("fonts");
+      for (String name : files) {
+        if (pattern.matcher(name).matches()) {
+          return String.format("fonts/%s", name);
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return null;
   }
 
   private final ReactApplicationContext reactContext;
