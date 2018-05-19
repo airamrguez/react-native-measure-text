@@ -80,8 +80,7 @@ class Test extends Component {
           >
             {text}
           </Text>
-        ));
-      );}
+        ))}
     </View>
   }
 }
