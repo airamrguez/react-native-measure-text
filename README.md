@@ -49,7 +49,7 @@ const texts = [
 ];
 const width = 100;
 const fontSize = 15;
-const fontFamily = 'Anton';
+const fontFamily = 'Arvo';
 
 class Test extends Component {
   state = {
@@ -103,6 +103,7 @@ Measure options:
 * `height`: Container height when you want to measure the width.
 * `fontSize`: The size of the font.
 * `fontFamily`: The name of a _custom_ font or a _preinstalled_ font. This is optional.
+* `fontWeight`: Specifies font weight. The values are the same that React Native allows: `enum('normal', 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900')`
 
 ## How to use a custom font?
 
@@ -119,7 +120,13 @@ Follow these steps:
   }
 ```
 
-3.  If you want to use the same font cross-platform, in order to avoid platform incompatibility issues, be sure that your font file name matches the font name! For example if the font name is "Anton" the file should be named "Anton.ttf". You can specify different fonts for each platform if you want.
+3.  If you want to use the same font cross-platform, in order to avoid platform incompatibility issues, be sure that your font file name matches the font name! For example if the font name is "Arvo" the file should be named "Arvo.ttf". You can specify different fonts for each platform if you want.
 4.  Run the command `react-native link` on the root of your project to link the added fonts.
+
+## Using `fontWeight`
+
+If you are using custom fonts then you have to add the **bold** version into the `assets/fonts` directory. Follow the convention that React Native applies. Extracted from the docs:
+
+> Given a "family" font family the files in the assets/fonts folder need to be family.ttf (.otf) family_bold.ttf(.otf) family_italic.ttf(.otf) and family_bold_italic.ttf(.otf)
 
 You're ready to go!

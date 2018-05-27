@@ -55,6 +55,11 @@
 	<array>
 		<string>Anton-Regular.ttf</string>
 		<string>Anton.ttf</string>
+		<string>Arvo-Bold.ttf</string>
+		<string>Arvo.ttf</string>
+		<string>Arvo Bold.ttf</string>
+		<string>Arvo Negrita.ttf</string>
+		<string>Arvo_bold.ttf</string>
 	</array>
 </dict>
 </plist>

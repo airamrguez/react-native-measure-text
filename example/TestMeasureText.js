@@ -5,16 +5,13 @@ import {
   View,
   Button,
   ScrollView,
+  Switch,
   PixelRatio,
   Platform,
 } from 'react-native';
 import MeasureText from 'react-native-measure-text';
 
-const BASE_FONT_SIZE = 15;
-const FONT_SIZE =
-  Platform.OS === 'ios'
-    ? BASE_FONT_SIZE
-    : BASE_FONT_SIZE * PixelRatio.getFontScale();
+const FONT_SIZE = 15;
 
 const TEXTS = [
   'This is a first string',
@@ -22,16 +19,16 @@ const TEXTS = [
   'Bacon ipsum dolor amet capicola filet mignon flank venison ball tip pancetta cupim tenderloin bacon beef shank.',
 ];
 
-const TEXT_WIDTH = 100;
+const TEXT_WIDTH = 108;
 const TEXT_HEIGHT = 20;
 
 // This example is using preinstalled fonts in the device, but
 // you can use custom fonts.
 const PREINSTALLED_FONT = Platform.select({
-  ios: 'EuphemiaUCAS',
+  ios: undefined,
   android: 'monospace',
 });
-const ANTON_FONT = 'Anton';
+const CUSTOM_FONT = 'Arvo';
 
 export default class TestMeasureText extends Component {
   constructor(...args) {
@@ -39,27 +36,32 @@ export default class TestMeasureText extends Component {
     this.state = {
       heights: 0,
       widths: 0,
-      useAntonFont: false,
+      useCustomFont: false,
+      fontWeight: 'normal',
     };
   }
   componentDidMount() {
     this.measure();
   }
   async measure() {
-    const { useAntonFont } = this.state;
-    const fontFamily = useAntonFont ? ANTON_FONT : PREINSTALLED_FONT;
+    const { useCustomFont, fontWeight } = this.state;
+    const fontFamily = useCustomFont ? CUSTOM_FONT : PREINSTALLED_FONT;
     const [heights, widths] = await Promise.all([
       MeasureText.heights({
         texts: TEXTS,
         width: TEXT_WIDTH,
         fontSize: FONT_SIZE,
+        fontWeight,
         fontFamily,
+        fontWeight,
       }),
       MeasureText.widths({
         texts: TEXTS,
         height: TEXT_HEIGHT,
         fontSize: FONT_SIZE,
+        fontWeight,
         fontFamily,
+        fontWeight,
       }),
     ]);
     this.setState({ heights, widths });
@@ -67,26 +69,50 @@ export default class TestMeasureText extends Component {
   toggleFont = () => {
     this.setState(
       state => ({
-        useAntonFont: !state.useAntonFont,
+        useCustomFont: !state.useCustomFont,
+      }),
+      this.measure,
+    );
+  };
+  toggleFontWeight = () => {
+    this.setState(
+      state => ({
+        fontWeight: state.fontWeight === 'bold' ? 'normal' : 'bold',
       }),
       this.measure,
     );
   };
   render() {
-    const { heights, widths, useAntonFont } = this.state;
+    const { heights, widths, useCustomFont, fontWeight } = this.state;
     let buttonText;
     let fontFamily;
-    if (useAntonFont) {
+    if (useCustomFont) {
       buttonText = 'Switch to preinstalled fonts';
-      fontFamily = ANTON_FONT;
+      fontFamily = 'Arvo';
     } else {
-      buttonText = 'Switch to Anton font';
+      buttonText = 'Switch to Arvo font';
       fontFamily = PREINSTALLED_FONT;
     }
+
     return (
       <View style={styles.container}>
         <ScrollView style={{ flex: 1 }}>
           <Text>Height examples:</Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-evenly',
+            }}
+          >
+            <Switch
+              value={fontWeight === 'bold'}
+              onValueChange={this.toggleFontWeight}
+            />
+            <Text>Use bold style</Text>
+            <Button onPress={this.toggleFont} title={buttonText} />
+          </View>
           {TEXTS.map((text, i) => (
             <View
               key={`text-block-${i}`}
@@ -99,7 +125,9 @@ export default class TestMeasureText extends Component {
                 style={{
                   width: TEXT_WIDTH,
                   fontSize: FONT_SIZE,
+                  fontWeight,
                   fontFamily,
+                  fontWeight,
                   height: heights[i],
                   backgroundColor: 'coral',
                   color: '#fff',
@@ -122,7 +150,9 @@ export default class TestMeasureText extends Component {
                 style={{
                   height: TEXT_HEIGHT,
                   fontSize: FONT_SIZE,
+                  fontWeight,
                   fontFamily,
+                  fontWeight,
                   width: widths[i],
                   backgroundColor: 'orangered',
                   color: '#fff',
@@ -132,7 +162,6 @@ export default class TestMeasureText extends Component {
               </Text>
             </View>
           ))}
-          <Button onPress={this.toggleFont} title={buttonText} />
         </ScrollView>
       </View>
     );

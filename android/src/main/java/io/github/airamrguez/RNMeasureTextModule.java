@@ -1,14 +1,13 @@
 
 package io.github.airamrguez;
 
+import android.os.Build;
 import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.content.res.AssetManager;
-import java.io.IOException;
-import java.util.regex.Pattern;
-import java.io.FileNotFoundException;
+import java.lang.Math;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -19,6 +18,8 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
+
+import com.facebook.react.views.text.ReactFontManager;
 
 public class RNMeasureTextModule extends ReactContextBaseJavaModule {
   public RNMeasureTextModule(ReactApplicationContext reactContext) {
@@ -37,8 +38,9 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     ReadableArray texts = options.getArray("texts");
     float fontSize = (float)options.getDouble("fontSize");
     String fontFamily = options.getString("fontFamily");
+    String fontWeight = options.getString("fontWeight");
 
-    TextPaint paint = createTextPaint(fontSize, fontFamily);
+    TextPaint paint = createTextPaint(fontSize, fontFamily, fontWeight);
     WritableArray results = Arguments.createArray();
 
     for (int i = 0; i < texts.size(); i++) {
@@ -46,17 +48,27 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
       float spacingMultiplier = 1;
       float spacingAddition = 0;
       boolean includePadding = false;
-      StaticLayout layout = new StaticLayout(
-              text,
-              paint,
-              width,
-              Layout.Alignment.ALIGN_NORMAL,
-              spacingMultiplier,
-              spacingAddition,
-              includePadding
-      );
-
-      results.pushDouble((double)layout.getHeight());
+      Layout layout;
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        layout = new StaticLayout(
+          text,
+          paint,
+          width,
+          Layout.Alignment.ALIGN_NORMAL,
+          1.f,
+          0.f,
+          includePadding
+        );
+      } else {
+        layout = StaticLayout.Builder.obtain(text, 0, text.length(), paint, width)
+          .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+          .setLineSpacing(0.f, 1.f)
+          .setIncludePad(includePadding)
+          .setBreakStrategy(textBreakStrategy)
+          .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NORMAL)
+          .build();
+      }
+      results.pushDouble(layout.getHeight());
     }
 
     promise.resolve(results);
@@ -68,15 +80,15 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     ReadableArray texts = options.getArray("texts");
     float fontSize = (float)options.getDouble("fontSize");
     String fontFamily = options.getString("fontFamily");
+    String fontWeight = options.getString("fontWeight");
 
-    TextPaint paint = createTextPaint(fontSize, fontFamily);
+    TextPaint paint = createTextPaint(fontSize, fontFamily, fontWeight);
     WritableArray results = Arguments.createArray();
 
     for (int i = 0; i < texts.size(); i++) {
       String text = texts.getString(i);
-      results.pushDouble((double)paint.measureText(text));
+      results.pushDouble(paint.measureText(text));
     }
-
     promise.resolve(results);
   }
 
@@ -86,43 +98,37 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     heights(options, promise);
   }
 
-  private TextPaint createTextPaint(float fontSize, String fontFamily) {
-    TextPaint paint = new TextPaint();
-    paint.setAntiAlias(true);
-    paint.setTextSize(fontSize);
-    if (fontFamily != null) {
-      Typeface typeface = null;
-      AssetManager assetManager = getReactApplicationContext().getAssets();
-      String fontPath = findFontPath(assetManager, fontFamily);
-      // If the font path is not installed let's suppose that is a
-      // preinstalled font.
-      if (fontPath != null) {
-        typeface = Typeface.createFromAsset(assetManager, fontPath);
-      } else {
-        // Allow using preinstalled Android fonts: monospace, serif, normal, Roboto...
-        typeface = Typeface.create(fontFamily, Typeface.NORMAL);
-      }
-      paint.setTypeface(typeface);
-    }
+  private TextPaint createTextPaint(float fontSize, String fontFamily, String fontWeight) {
+    TextPaint paint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+    paint.setTextSize(fontSize * this.reactContext.getResources().getConfiguration().fontScale);
+    AssetManager assetManager = getReactApplicationContext().getAssets();
+    Typeface typeface = ReactFontManager.getInstance().getTypeface(fontFamily, getFontWeight(fontWeight), assetManager);
+    paint.setTypeface(typeface);
     return paint;
   }
 
-  private String findFontPath(AssetManager assetManager, String fontFamily) {
-    Pattern pattern = Pattern.compile("^" + fontFamily + "\\.(ttf|otf)$");
-
-    try {
-      String[] files = assetManager.list("fonts");
-      for (String name : files) {
-        if (pattern.matcher(name).matches()) {
-          return String.format("fonts/%s", name);
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
+  /**
+   * Android P is adding new typefaces. This should be updated by that time.
+   */
+  private int getFontWeight(String fontWeight) {
+    switch (fontWeight) {
+      case "bold":
+      case "500":
+      case "600":
+      case "700":
+      case "800":
+      case "900":
+        return Typeface.BOLD;
+      case "normal":
+      case "100":
+      case "200":
+      case "300":
+      case "400":
+      default:
+        return Typeface.NORMAL;
     }
-    
-    return null;
   }
 
   private final ReactApplicationContext reactContext;
+  private int textBreakStrategy = (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) ? 0 : Layout.BREAK_STRATEGY_HIGH_QUALITY;
 }
