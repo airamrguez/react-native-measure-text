@@ -87,6 +87,9 @@ RCT_EXPORT_METHOD(measure:(NSDictionary *)options
 }
 
 - (UIFont *)getFont:(NSString *)fontFamily size:(CGFloat)fontSize weight:(NSString*)fontWeight {
+    if (fontWeight == nil) {
+        fontWeight = @"normal";
+    };
     return fontFamily == nil ?
         [RCTConvert UIFont:@{@"fontWeight": fontWeight, @"fontSize": [NSNumber numberWithFloat:fontSize]}] :
         [RCTConvert UIFont:@{@"fontFamily": fontFamily, @"fontSize": [NSNumber numberWithFloat:fontSize], @"fontWeight": fontWeight}];
