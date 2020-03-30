@@ -31,7 +31,7 @@ And then:
 
 #### Android
 
-1.  Open up `android/app/src/main/java/[...]/MainActivity.java`
+1.  Open up `android/app/src/main/java/[...]/MainApplication.java`
 
 * Add `import io.github.airamrguez.RNMeasureTextPackage;` to the imports at the top of the file
 * Add `new RNMeasureTextPackage()` to the list returned by the `getPackages()` method
